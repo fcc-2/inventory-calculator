@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Inventory Calculator</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans / Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #f1f5f9;
+      color: #0f233d;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+    }
+
+    /* Outer Wrapper */
+    .calculator-wrapper {
+      width: 100%;
+      max-width: 680px;
+      background: #ffffff;
+      padding: 36px 32px 30px 32px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Headings */
+    .header-section {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .main-title {
+      font-size: 2.15rem;
+      font-weight: 800;
+      color: #0d223a;
+      letter-spacing: -0.5px;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .main-title span.red-text {
+      color: #c9141d;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #24374e;
+      font-weight: 600;
+      line-height: 1.45;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .subtitle span.highlight {
+      color: #c9141d;
+      font-weight: 800;
+    }
+
+    /* Inner Card with Border */
+    .calc-card-frame {
+      border: 1.5px solid #d2dbe5;
+      border-radius: 22px;
+      padding: 20px 22px;
+      position: relative;
+      background: #ffffff;
+    }
+
+    /* ROW 1: 4 Inputs Grid */
+    .inputs-row-box {
+      border: 1.5px solid #d2dbe5;
+      border-radius: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      overflow: hidden;
+      margin-bottom: 14px;
+      background: #ffffff;
+    }
+
+    .input-cell {
+      padding: 12px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      border-right: 1.5px solid #d2dbe5;
+      min-height: 88px;
+    }
+
+    .input-cell:last-child {
+      border-right: none;
+    }
+
+    .cell-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0d223a;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+
+    .cell-input-pill {
+      background: #fdf2f2;
+      border: 1px solid #fee2e2;
+      border-radius: 6px;
+      width: 88%;
+      padding: 4px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cell-input-pill input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #c9141d;
+      text-align: center;
+      font-family: inherit;
+    }
+
+    /* ROW 2: Inventory Value Comparison */
+    .row-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .compare-card {
+      border: 1.5px solid #f29b9e;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: center;
+      background: #ffffff;
+    }
+
+    .compare-label {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #0d223a;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .compare-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #c9141d;
+      letter-spacing: -0.3px;
+    }
+
+    .chevron-icon {
+      color: #94a3b8;
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    /* ROW 3: Working Capital Released (Big Red Hero) */
+    .row-capital-released {
+      border: 1.5px solid #f29b9e;
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+      background: #ffffff;
+    }
+
+    .capital-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-right: 16px;
+      border-right: 2px solid #8ca2ba;
+    }
+
+    .coins-icon-wrap svg {
+      width: 38px;
+      height: 38px;
+      color: #c9141d;
+      display: block;
+    }
+
+    .capital-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0d223a;
+      line-height: 1.2;
+    }
+
+    .capital-right-pill {
+      background: #c9141d;
+      border-radius: 30px;
+      padding: 8px 16px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .capital-right-pill .amount-text {
+      font-size: 1.95rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+
+    /* ROW 4: Fewer Power Cords Held */
+    .row-fewer-cords {
+      background: #fdf2f2;
+      border-radius: 14px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .boxes-icon-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .boxes-icon-wrap svg {
+      width: 40px;
+      height: 40px;
+      color: #c9141d;
+      flex-shrink: 0;
+    }
+
+    .vertical-sep {
+      width: 2px;
+      height: 36px;
+      background-color: #8ca2ba;
+    }
+
+    .fewer-cords-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .fewer-amount {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #c9141d;
+      letter-spacing: -0.5px;
+    }
+
+    .fewer-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #0d223a;
+      line-height: 1.25;
+    }
+
+    /* ROW 5: Financing Rate & Carrying-cost Saving */
+    .row-financing {
+      display: grid;
+      grid-template-columns: 1fr auto 1.35fr;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .financing-card {
+      border: 1.5px solid #f29b9e;
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #ffffff;
+    }
+
+    .financing-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #0d223a;
+      line-height: 1.25;
+    }
+
+    .financing-pill {
+      background: #fdf2f2;
+      border: 1px solid #fee2e2;
+      border-radius: 6px;
+      padding: 4px 10px;
+      min-width: 60px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .financing-pill input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #c9141d;
+      text-align: center;
+      font-family: inherit;
+    }
+
+    .saving-pill {
+      background: #fdf2f2;
+      border: 1px solid #fee2e2;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #c9141d;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Disclaimer Section */
+    .disclaimer-box {
+      border-top: 1.5px solid #e2e8f0;
+      padding-top: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .info-circle svg {
+      width: 22px;
+      height: 22px;
+      color: #0d223a;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .info-divider {
+      width: 2px;
+      height: 38px;
+      background: #0d223a;
+      flex-shrink: 0;
+    }
+
+    .disclaimer-text {
+      font-size: 0.72rem;
+      font-style: italic;
+      color: #24374e;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    /* Bottom Action Button */
+    .button-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .button-line {
+      height: 1.5px;
+      background-color: #d2dbe5;
+      flex: 1;
+    }
+
+    .cta-button {
+      background: #c9141d;
+      color: #ffffff;
+      border: none;
+      border-radius: 30px;
+      padding: 12px 28px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(201, 20, 29, 0.3);
+      user-select: none;
+    }
+
+    .cta-button:hover {
+      background: #b01018;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(201, 20, 29, 0.4);
+    }
+
+    .cta-button:active {
+      transform: translateY(0);
+    }
+
+    /* Subtle Quick Copy Toast */
+    #copyToast {
+      position: fixed;
+      bottom: 24px;
+      background: #0d223a;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.25s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    #copyToast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive for small screens */
+    @media (max-width: 580px) {
+      .calculator-wrapper { padding: 24px 16px; }
+      .main-title { font-size: 1.7rem; }
+      .inputs-row-box { grid-template-columns: repeat(2, 1fr); }
+      .input-cell:nth-child(2) { border-right: none; }
+      .input-cell:nth-child(1), .input-cell:nth-child(2) { border-bottom: 1.5px solid #d2dbe5; }
+      .row-comparison { grid-template-columns: 1fr; gap: 8px; }
+      .chevron-icon { transform: rotate(90deg); margin: -4px 0; }
+      .row-capital-released { grid-template-columns: 1fr; text-align: center; gap: 10px; }
+      .capital-left { border-right: none; border-bottom: 1.5px solid #d2dbe5; padding-bottom: 8px; padding-right: 0; justify-content: center; }
+      .row-financing { grid-template-columns: 1fr; gap: 8px; }
+      .row-financing .chevron-icon { transform: rotate(90deg); margin: -4px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator-wrapper">
+
+    <!-- Header Section -->
+    <header class="header-section">
+      <h1 class="main-title">
+        Show the Customer How Much<br/>
+        <span class="red-text">Money is Blocked</span>
+      </h1>
+      <p class="subtitle">
+        Use a real-life example based on an appliance manufacturer consuming <span class="highlight" id="subtitleCords">4,000 power cords</span> daily.
+      </p>
+    </header>
+
+    <!-- Main Card Frame -->
+    <div class="calc-card-frame">
+
+      <!-- ROW 1: 4 Inputs in Single Box -->
+      <div class="inputs-row-box">
+        <!-- 1. Daily cord consumption -->
+        <div class="input-cell">
+          <label class="cell-label" for="dailyConsumption">Daily cord<br/>consumption</label>
+          <div class="cell-input-pill">
+            <input type="text" id="dailyConsumption" value="4,000" inputmode="numeric" />
+          </div>
+        </div>
+
+        <!-- 2. Cost per cord -->
+        <div class="input-cell">
+          <label class="cell-label" for="unitCost">Cost per<br/>cord (₹)</label>
+          <div class="cell-input-pill">
+            <input type="text" id="unitCost" value="85" inputmode="numeric" />
+          </div>
+        </div>
+
+        <!-- 3. Current stock (days) -->
+        <div class="input-cell">
+          <label class="cell-label" for="currentDays">Current<br/>stock (days)</label>
+          <div class="cell-input-pill">
+            <input type="text" id="currentDays" value="40" inputmode="numeric" />
+          </div>
+        </div>
+
+        <!-- 4. Proposed stock (days) -->
+        <div class="input-cell">
+          <label class="cell-label" for="proposedDays">Proposed<br/>stock (days)</label>
+          <div class="cell-input-pill">
+            <input type="text" id="proposedDays" value="3" inputmode="numeric" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: Inventory Value Comparison (Current >> Proposed) -->
+      <div class="row-comparison">
+        <div class="compare-card">
+          <div class="compare-label">Current<br/>inventory value</div>
+          <div class="compare-value" id="outCurrentValue">₹1,36,00,000</div>
+        </div>
+
+        <div class="chevron-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="7 6 13 12 7 18"></polyline>
+            <polyline points="13 6 19 12 13 18"></polyline>
+          </svg>
+        </div>
+
+        <div class="compare-card">
+          <div class="compare-label">Proposed<br/>inventory value</div>
+          <div class="compare-value" id="outProposedValue">₹10,20,000</div>
+        </div>
+      </div>
+
+      <!-- ROW 3: Working Capital Released -->
+      <div class="row-capital-released">
+        <div class="capital-left">
+          <div class="coins-icon-wrap">
+            <!-- Coins Stack SVG -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="6" rx="8" ry="3"></ellipse>
+              <path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"></path>
+              <path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"></path>
+            </svg>
+          </div>
+          <div class="capital-title">
+            Working capital<br/>released
+          </div>
+        </div>
+
+        <div class="capital-right-pill">
+          <div class="amount-text" id="outCapitalReleased">₹1,25,80,000</div>
+        </div>
+      </div>
+
+      <!-- ROW 4: Fewer Power Cords Held -->
+      <div class="row-fewer-cords">
+        <div class="boxes-icon-wrap">
+          <!-- 3D Boxes Stack SVG -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16.5 9.4 7.55 4.24a1.78 1.78 0 0 0-1.8 0l-4 2.31A1.78 1.78 0 0 0 1 8.09v4.62c0 .65.35 1.25.9 1.57l4.85 2.8"></path>
+            <path d="M22.25 8.09 17.4 5.29a1.78 1.78 0 0 0-1.8 0L6.75 10.4"></path>
+            <path d="m12 13.5 9.25-5.34c.55-.32.9-.92.9-1.57V2"></path>
+            <path d="M12 13.5V22"></path>
+            <path d="M12 13.5 2.75 8.16"></path>
+            <path d="m21.1 14.28-7.3 4.22a1.78 1.78 0 0 1-1.8 0l-7.3-4.22"></path>
+          </svg>
+          <div class="vertical-sep"></div>
+        </div>
+
+        <div class="fewer-cords-content">
+          <span class="fewer-amount" id="outUnitsFewer">1,48,000</span>
+          <span class="fewer-label">fewer power cords<br/>held in the customer's store</span>
+        </div>
+      </div>
+
+      <!-- ROW 5: Financing Rate & Carrying-cost Saving -->
+      <div class="row-financing">
+        <!-- Annual financing rate -->
+        <div class="financing-card">
+          <label class="financing-label" for="carryingRate">Annual financing /<br/>carrying rate</label>
+          <div class="financing-pill">
+            <input type="text" id="carryingRate" value="12%" inputmode="numeric" />
+          </div>
+        </div>
+
+        <div class="chevron-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="7 6 13 12 7 18"></polyline>
+            <polyline points="13 6 19 12 13 18"></polyline>
+          </svg>
+        </div>
+
+        <!-- Estimated annual saving -->
+        <div class="financing-card">
+          <div class="financing-label">Estimated annual<br/>carrying-cost saving</div>
+          <div class="saving-pill" id="outCarryingSaving">₹15,09,600</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Button -->
+    <div class="button-section">
+      <div class="button-line"></div>
+      <button type="button" class="cta-button" onclick="copyOrCalculate()">
+        Calculate for Your Business &rarr;
+      </button>
+      <div class="button-line"></div>
+    </div>
+
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="copyToast">✓ Figures copied to clipboard!</div>
+
+  <script>
+    // Inputs
+    const dailyInput = document.getElementById('dailyConsumption');
+    const costInput = document.getElementById('unitCost');
+    const currDaysInput = document.getElementById('currentDays');
+    const propDaysInput = document.getElementById('proposedDays');
+    const rateInput = document.getElementById('carryingRate');
+
+    // Outputs
+    const outCurrentVal = document.getElementById('outCurrentValue');
+    const outProposedVal = document.getElementById('outProposedValue');
+    const outCapitalReleased = document.getElementById('outCapitalReleased');
+    const outUnitsFewer = document.getElementById('outUnitsFewer');
+    const outCarryingSaving = document.getElementById('outCarryingSaving');
+    const subtitleCords = document.getElementById('subtitleCords');
+
+    // Helper: Parse number from formatted string
+    function parseCleanNumber(str) {
+      if (!str) return 0;
+      const clean = str.toString().replace(/[^0-9.]/g, '');
+      return parseFloat(clean) || 0;
+    }
+
+    // Helper: Format number into Indian Locale
+    function formatINR(val) {
+      if (isNaN(val)) return '₹0';
+      return '₹' + Math.round(val).toLocaleString('en-IN');
+    }
+
+    function formatNumber(val) {
+      if (isNaN(val)) return '0';
+      return Math.round(val).toLocaleString('en-IN');
+    }
+
+    // Live Calculation Function
+    function calculate() {
+      const daily = parseCleanNumber(dailyInput.value);
+      const cost = parseCleanNumber(costInput.value);
+      const currentDays = parseCleanNumber(currDaysInput.value);
+      const proposedDays = parseCleanNumber(propDaysInput.value);
+      const rate = parseCleanNumber(rateInput.value);
+
+      // Formulas
+      const currentInventoryVal = daily * cost * currentDays;
+      const proposedInventoryVal = daily * cost * proposedDays;
+      const capitalReleased = currentInventoryVal - proposedInventoryVal;
+      const fewerUnits = Math.max(0, (currentDays - proposedDays) * daily);
+      const annualSaving = capitalReleased * (rate / 100);
+
+      // Render Outputs
+      outCurrentVal.innerText = formatINR(currentInventoryVal);
+      outProposedVal.innerText = formatINR(proposedInventoryVal);
+      outCapitalReleased.innerText = formatINR(capitalReleased);
+      outUnitsFewer.innerText = formatNumber(fewerUnits);
+      outCarryingSaving.innerText = formatINR(annualSaving);
+
+      // Subtitle dynamic update
+      subtitleCords.innerText = `${formatNumber(daily)} power cords`;
+    }
+
+    // Bind event listeners for real-time live typing
+    [dailyInput, costInput, currDaysInput, propDaysInput, rateInput].forEach(input => {
+      input.addEventListener('input', calculate);
+
+      // Format on blur
+      input.addEventListener('blur', () => {
+        const val = parseCleanNumber(input.value);
+        if (input === dailyInput) {
+          input.value = formatNumber(val);
+        } else if (input === rateInput) {
+          input.value = val + '%';
+        } else {
+          input.value = val;
+        }
+        calculate();
+      });
+
+      // Clear percent or commas on focus for easy editing
+      input.addEventListener('focus', () => {
+        const raw = parseCleanNumber(input.value);
+        input.value = raw > 0 ? raw : '';
+      });
+    });
+
+    // Button click: Copies clean summary to clipboard and highlights
+    function copyOrCalculate() {
+      calculate();
+
+      const summary = 
+`==============================================
+SHOW THE CUSTOMER HOW MUCH MONEY IS BLOCKED
+==============================================
+Daily cord consumption: ${dailyInput.value}
+Cost per cord (₹): ${costInput.value}
+Current stock (days): ${currDaysInput.value}
+Proposed stock (days): ${propDaysInput.value}
+
+Current inventory value: ${outCurrentVal.innerText}
+Proposed inventory value: ${outProposedVal.innerText}
+Working capital released: ${outCapitalReleased.innerText}
+${outUnitsFewer.innerText} fewer power cords held in the customer's store
+Annual financing / carrying rate: ${rateInput.value}
+
+Estimated annual carrying-cost saving: ${outCarryingSaving.innerText}
+==============================================`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summary).then(showToast);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = summary;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast();
+      }
+    }
+
+    function showToast() {
+      const toast = document.getElementById('copyToast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // Initial calculation run
+    calculate();
+  </script>
+</body>
+</html>
